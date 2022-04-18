@@ -4,6 +4,8 @@ import * as url from "url";
 
 let mainWindow: Electron.BrowserWindow | null;
 
+app.disableHardwareAcceleration();
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 330,

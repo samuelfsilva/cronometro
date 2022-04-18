@@ -13,8 +13,8 @@ export default function Cronometro(): JSX.Element {
     setIsActive(true)
     setIsPaused(false)
     increment.current = setInterval(() => {
-      setTimer((timer) => timer + 10)
-    }, 10)
+      setTimer((timer) => timer + 18)
+    }, 18)
   }
 
   const handlePause = () => {
@@ -22,11 +22,15 @@ export default function Cronometro(): JSX.Element {
     setIsPaused(true)
   }
 
+  const handleStartResume = () => {
+    isPaused && isActive ? handleResume() : handleStart()
+  }
+
   const handleResume = () => {
     setIsPaused(false)
     increment.current = setInterval(() => {
-      setTimer((timer) => timer + 10)
-    }, 10)
+      setTimer((timer) => timer + 18)
+    }, 18)
   }
 
   const handleReset = () => {
@@ -38,7 +42,7 @@ export default function Cronometro(): JSX.Element {
 
   const formatTime = () => {
     const miliseconds = String(timer % 1000).padStart(3,'0')
-    const seconds = String(Math.trunc(timer / 1000)).padStart(2,'0')
+    const seconds = String(Math.trunc((timer % 60000) / 1000)).padStart(2,'0')
     const minutes = String(Math.trunc(timer / 60000)).padStart(2,'0')
     //const hours = String(Math.trunc(timer / 216000000)).padStart(2,'0')
 
@@ -53,13 +57,13 @@ export default function Cronometro(): JSX.Element {
         </Typography>
       </Grid>
       <Typography variant="h1" textAlign="center" sx={{ mt: 6 }}>
-        {isPaused ? <IconButton aria-label="play" size="large" sx={{ color: "#FFF" }} onClick={handleStart}>
+        {isPaused ? <IconButton aria-label="play" size="large" sx={{ color: "#FFF" }} onClick={handleStartResume}>
           <PlayCircle fontSize="inherit" />
         </IconButton> :
         <IconButton aria-label="pause" size="large" sx={{ color: "#FFF" }} onClick={handlePause}>
           <PauseCircle fontSize="inherit" />
         </IconButton>}
-        {timer !== 0 &&
+        {isActive &&
         <IconButton aria-label="restart" size="large" sx={{ color: "#FFF" }} onClick={handleReset}>
           <RestartAltRounded fontSize="inherit" />
         </IconButton>}
