@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
- <img src="https://media.giphy.com/media/B2Bp7mBSSUxQxYMedz/giphy.gif" alt="APP"/>
+ <img src="https://raw.githubusercontent.com/samuelfsilva/cronometro/main/prints/01.png" alt="APP"/>
 </p>
 
 ## 💻 Project
