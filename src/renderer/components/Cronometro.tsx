@@ -1,19 +1,42 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import { Box, Container, Grid, Typography, IconButton } from "@mui/material";
 import { PlayCircle, PauseCircle, RestartAltRounded } from "@mui/icons-material";
 
 export default function Cronometro(): JSX.Element {
-  const [timer, setTimer] = useState(0);
+  const [minutos, setMinutos] = useState(0);
+  const [segundos, setSegundos] = useState(0);
+  const [milesimos, setMilesimos] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(true);
   const increment: { current: NodeJS.Timeout | null } = useRef(null);
+
+  useEffect(() => {
+    let soma = milesimos > 999 ? 1 : 0
+    setSegundos((segundos) => segundos + soma)
+  }, [milesimos])
+
+  useEffect(() => {
+    let soma = segundos > 59 ? 1 : 0
+    setMinutos((minutos) => minutos + soma)
+  }, [segundos])
 
   const handleStart = () => {
     setIsActive(true)
     setIsPaused(false)
     increment.current = setInterval(() => {
-      setTimer((timer) => timer + 18)
+      setMilesimos((milesimos) => milesimos + 18)
+      setMilesimos((milesimos) => milesimos % 1000)
+      setSegundos((segundos) => segundos % 60)
+    }, 18)
+  }
+
+  const handleResume = () => {
+    setIsPaused(false)
+    increment.current = setInterval(() => {
+      setMilesimos((milesimos) => milesimos + 18)
+      setMilesimos((milesimos) => milesimos % 1000)
+      setSegundos((segundos) => segundos % 60)
     }, 18)
   }
 
@@ -26,27 +49,21 @@ export default function Cronometro(): JSX.Element {
     isPaused && isActive ? handleResume() : handleStart()
   }
 
-  const handleResume = () => {
-    setIsPaused(false)
-    increment.current = setInterval(() => {
-      setTimer((timer) => timer + 18)
-    }, 18)
-  }
-
   const handleReset = () => {
     clearInterval(increment.current as NodeJS.Timeout)
     setIsActive(false)
     setIsPaused(true)
-    setTimer(0)
+    setMilesimos(0)
+    setSegundos(0)
+    setMinutos(0)
   }
 
   const formatTime = () => {
-    const miliseconds = String(timer % 1000).padStart(3,'0')
-    const seconds = String(Math.trunc((timer % 60000) / 1000)).padStart(2,'0')
-    const minutes = String(Math.trunc(timer / 60000)).padStart(2,'0')
-    //const hours = String(Math.trunc(timer / 216000000)).padStart(2,'0')
+    const miliseconds = String(milesimos).padStart(3,'0')
+    const seconds = String(segundos).padStart(2,'0')
+    const minutes = String(minutos).padStart(2,'0')
 
-    return /*`${hours} : */`${minutes} : ${seconds} : ${miliseconds}`
+    return `${minutes} : ${seconds} : ${miliseconds}`
   }
 
   return (
