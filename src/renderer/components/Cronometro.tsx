@@ -1,10 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Grid, Typography, IconButton } from "@mui/material";
 import { PlayCircle, PauseCircle, RestartAltRounded } from "@mui/icons-material";
 
 export default function Cronometro(): JSX.Element {
   const [inicial, setInicial] = useState(0);
-  const [control, setControl] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(true);
   const [timerSum, setTimerSum] = useState(0);
@@ -17,12 +16,20 @@ export default function Cronometro(): JSX.Element {
   useEffect(() => {
     let id: NodeJS.Timeout | null = null
 
-    id = setInterval(() => {
-      setTimer((control * new Date().getTime()) - inicial as number);
-    }, 23);
-
+    if (!isPaused) {
+      id = setInterval(() => {
+        setTimer((new Date().getTime()) - inicial as number);
+      }, 23);
+    } else {
+      if (!isActive) {
+        setTimer(0);
+      };
+      if (id) {
+        clearInterval(id as NodeJS.Timeout);
+      };
+    }
     return () => clearInterval(id as NodeJS.Timeout);
-  }, [inicial, control]);
+  }, [inicial]);
 
   useEffect(() => {
       setMilesimos(timer % 1000);
@@ -33,7 +40,6 @@ export default function Cronometro(): JSX.Element {
   const handleStart = () => {
     setIsActive(true);
     setIsPaused(false);
-    setControl(1);
     setInicial(new Date().getTime());
   };
 
@@ -41,24 +47,21 @@ export default function Cronometro(): JSX.Element {
     setIsPaused(true);
     setTimerSum(timer);
     setInicial((timer) * (-1));
-    setControl(0);
   };
 
   const handleResume = () => {
     setIsPaused(false);
-    setControl(1);
     setInicial(new Date().getTime() - timerSum);
   };
 
   const handleReset = () => {
     setIsActive(false);
+    setInicial(0);
     setIsPaused(true);
     setMilesimos(0);
     setSegundos(0);
     setMinutos(0);
     setTimer(0);
-    setControl(0);
-    setInicial(0);
     setTimerSum(0);
   };
 
