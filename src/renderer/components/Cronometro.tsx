@@ -8,6 +8,7 @@ export default function Cronometro(): JSX.Element {
   const [isPaused, setIsPaused] = useState(true);
   const [timerSum, setTimerSum] = useState(0);
   const [timer, setTimer] = useState(0);
+  const [horas, setHoras] = useState(0);
   const [minutos, setMinutos] = useState(0);
   const [segundos, setSegundos] = useState(0);
   const [milesimos, setMilesimos] = useState(0);
@@ -34,7 +35,8 @@ export default function Cronometro(): JSX.Element {
   useEffect(() => {
       setMilesimos(timer % 1000);
       setSegundos((timer / 1000) % 60);
-      setMinutos((timer / 1000) / 60);
+      setMinutos((timer / 1000) / 60 % 60);
+      setHoras((timer / 1000) / 60 / 60);
   }, [timer]);
   
   const handleStart = () => {
@@ -73,7 +75,7 @@ export default function Cronometro(): JSX.Element {
   };
 
   const formatTime = () => {
-    return `${String(Math.trunc(minutos)).padStart(2,'0')} : ${String(Math.trunc(segundos)).padStart(2,'0')} : ${String(Math.trunc(milesimos)).padStart(3,'0')}`;
+    return `${String(Math.trunc(horas)).padStart(2,'0')} : ${String(Math.trunc(minutos)).padStart(2,'0')} : ${String(Math.trunc(segundos)).padStart(2,'0')} : ${String(Math.trunc(milesimos)).padStart(3,'0')}`;
   }
 
   return (
