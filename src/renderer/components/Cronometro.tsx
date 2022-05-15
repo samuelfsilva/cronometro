@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Container, Grid, Typography, IconButton } from "@mui/material";
-import { PlayCircle, PauseCircle, RestartAltRounded } from "@mui/icons-material";
+import {
+  PlayCircle,
+  PauseCircle,
+  RestartAltRounded,
+} from "@mui/icons-material";
 
 export default function Cronometro(): JSX.Element {
   const [inicial, setInicial] = useState(0);
@@ -12,33 +16,32 @@ export default function Cronometro(): JSX.Element {
   const [minutos, setMinutos] = useState(0);
   const [segundos, setSegundos] = useState(0);
   const [milesimos, setMilesimos] = useState(0);
-  
-  
+
   useEffect(() => {
-    let id: NodeJS.Timeout | null = null
+    let id: NodeJS.Timeout | null = null;
 
     if (!isPaused) {
       id = setInterval(() => {
-        setTimer((new Date().getTime()) - inicial as number);
+        setTimer((new Date().getTime() - inicial) as number);
       }, 23);
     } else {
       if (!isActive) {
         setTimer(0);
-      };
+      }
       if (id) {
         clearInterval(id as NodeJS.Timeout);
-      };
+      }
     }
     return () => clearInterval(id as NodeJS.Timeout);
   }, [inicial]);
 
   useEffect(() => {
-      setMilesimos(timer % 1000);
-      setSegundos((timer / 1000) % 60);
-      setMinutos((timer / 1000) / 60 % 60);
-      setHoras((timer / 1000) / 60 / 60);
+    setMilesimos(timer % 1000);
+    setSegundos((timer / 1000) % 60);
+    setMinutos((timer / 1000 / 60) % 60);
+    setHoras(timer / 1000 / 60 / 60);
   }, [timer]);
-  
+
   const handleStart = () => {
     setIsActive(true);
     setIsPaused(false);
@@ -48,7 +51,7 @@ export default function Cronometro(): JSX.Element {
   const handlePause = () => {
     setIsPaused(true);
     setTimerSum(timer);
-    setInicial((timer) * (-1));
+    setInicial(timer * -1);
   };
 
   const handleResume = () => {
@@ -68,38 +71,60 @@ export default function Cronometro(): JSX.Element {
   };
 
   const onClick = () => {
-    if (isActive && isPaused)
-      handleResume()
-    else
-      handleStart();
+    if (isActive && isPaused) handleResume();
+    else handleStart();
   };
 
   const formatTime = () => {
-    return `${String(Math.trunc(horas)).padStart(2,'0')} : ${String(Math.trunc(minutos)).padStart(2,'0')} : ${String(Math.trunc(segundos)).padStart(2,'0')} : ${String(Math.trunc(milesimos)).padStart(3,'0')}`;
-  }
+    let h: string = String(Math.trunc(horas)).padStart(2, "0");
+    let m: string = String(Math.trunc(minutos)).padStart(2, "0");
+    let s: string = String(Math.trunc(segundos)).padStart(2, "0");
+    let mm: string = String(Math.trunc(milesimos)).padStart(3, "0");
+
+    return `${h} : ${m} : ${s} : ${mm}`;
+  };
 
   return (
     <Container maxWidth="md" sx={{ mt: 8 }}>
       <Grid container justifyContent="center">
-        <Typography variant="h1" textAlign="center" sx={{ mt: 8, userSelect: 'none' }}>
+        <Typography
+          variant="h1"
+          textAlign="center"
+          sx={{ mt: 8, userSelect: "none" }}
+        >
           {formatTime()}
         </Typography>
       </Grid>
       <Typography variant="h1" textAlign="center" sx={{ mt: 6 }}>
-        {isPaused ? 
-        <IconButton aria-label="play" size="large" 
-          sx={{ color: "#FFF" }} onClick={() => onClick()}>
-          <PlayCircle fontSize="inherit" />
-        </IconButton> :
-        <IconButton aria-label="pause" size="large" 
-          sx={{ color: "#FFF" }} onClick={() => handlePause()}>
-          <PauseCircle fontSize="inherit" />
-        </IconButton>}
-        {isActive &&
-        <IconButton aria-label="restart" size="large" 
-          sx={{ color: "#FFF" }} onClick={() => handleReset()}>
-          <RestartAltRounded fontSize="inherit" />
-        </IconButton>}
+        {isPaused ? (
+          <IconButton
+            aria-label="play"
+            size="large"
+            sx={{ color: "#FFF" }}
+            onClick={() => onClick()}
+          >
+            <PlayCircle fontSize="inherit" />
+          </IconButton>
+        ) : (
+          <IconButton
+            aria-label="pause"
+            size="large"
+            sx={{ color: "#FFF" }}
+            onClick={() => handlePause()}
+          >
+            <PauseCircle fontSize="inherit" />
+          </IconButton>
+        )}
+        {isActive && (
+          <IconButton
+            aria-label="restart"
+            size="large"
+            sx={{ color: "#FFF" }}
+            onClick={() => handleReset()}
+          >
+            <RestartAltRounded fontSize="inherit" />
+          </IconButton>
+        )}
       </Typography>
     </Container>
   );
